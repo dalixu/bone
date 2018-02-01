@@ -194,6 +194,15 @@ func (wq *watcherQueue) Run() {
 	}
 }
 
+//NewSliceDepProperty 返回1个依赖对象
+func NewSliceDepProperty(value []interface{}, setted, getted func(sender interface{}, value []interface{})) SliceDepProperty {
+	return &sliceDepProperty{
+		value:  value,
+		setted: setted,
+		getted: getted,
+	}
+}
+
 //SliceDepProperty 用于数据绑定
 type SliceDepProperty interface {
 	SetSlice(value []interface{})
