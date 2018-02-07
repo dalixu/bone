@@ -62,6 +62,7 @@ func (ml *MessageLoop) Run() int {
 	for {
 		select {
 		case <-time.After(10 * time.Millisecond):
+			ml.idleLoop()
 			if win.PeekMessage(&msg, 0, 0, 0, win.PM_REMOVE) {
 				if msg.Message == win.WM_QUIT {
 					return int(msg.WParam)
@@ -69,7 +70,6 @@ func (ml *MessageLoop) Run() int {
 				win.TranslateMessage(&msg)
 				win.DispatchMessage(&msg)
 			}
-			ml.idleLoop()
 		case ret := <-ml.exit:
 			return ret
 		}

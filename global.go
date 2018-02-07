@@ -90,15 +90,17 @@ func createBone(des *descriptor, ij *Injector) (*Bone, error) {
 	//执行vm的构造函数
 	rt := des.component.DataContext
 	var vm reflect.Value
-	var ctor reflect.Value
+	//var ctor reflect.Value
 	if rt.Kind() == reflect.Ptr {
 		vm = reflect.New(rt.Elem())
 	} else {
 		vm = reflect.New(rt).Elem()
 	}
-	ctor = vm.MethodByName("Constructor")
-	if ctor.IsValid() {
-		thisIJ.Call(ctor)
-	}
-	return NewBone(thisIJ, vm.Interface(), des.doc), nil
+	// ctor = vm.MethodByName()
+	// if ctor.IsValid() {
+	// 	thisIJ.Call(ctor)
+	// }
+	be := NewBone(thisIJ, vm.Interface(), des.doc)
+	be.CallVM("Constructor")
+	return be, nil
 }

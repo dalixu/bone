@@ -24,6 +24,17 @@ type Bone struct {
 	document xmlDoc
 }
 
+//CallVM 调用data里的方法
+func (be *Bone) CallVM(method string) {
+	if be.data == nil {
+		return
+	}
+	md := reflect.ValueOf(be.data).MethodByName(method)
+	if md.IsValid() {
+		be.Call(md)
+	}
+}
+
 func (be *Bone) Parent() *Bone {
 	return be.parent
 }

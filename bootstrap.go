@@ -1,5 +1,9 @@
 package bone
 
+import (
+	"container/list"
+)
+
 //Bootstrap 接口
 type Bootstrap interface {
 	Run() //消息循环的空闲例程
@@ -43,7 +47,25 @@ func NewBootstrap(template string, logger BLogger, provider []interface{}) Boots
 		return nil
 	}
 	bt.watcherManager.SetMode(true) //正常显示时为异步模式 在之后支持for if时也会临时设置为同步模式
+
+	nodes := list.New()
+	recursiveChildren(bt.Bone, nodes)
+	bt.dispatcher.Invoke(func() {
+		//给所有的nodes发送load信息
+		for nodes.Len() > 0 {
+			be := nodes.Remove(nodes.Front()).(*Bone)
+			//调用OnLoad
+			be.CallVM("OnLoad")
+		}
+	})
 	return bt
+}
+
+func recursiveChildren(node *Bone, nodes *list.List) {
+	nodes.PushBack(node)
+	for i := 0; i < node.ChildrenCount(); i++ {
+		recursiveChildren(node.ChildAt(i), nodes)
+	}
 }
 
 type bootstrap struct {
